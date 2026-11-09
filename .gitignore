@@ -31,3 +31,5 @@ docs/*
 _pack_temp/
 _transfer_temp/
 *.zip
+".screenshots/" 
+"*.png" 
