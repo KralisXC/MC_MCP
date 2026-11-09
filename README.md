@@ -1,10 +1,12 @@
 # MC_MCP · Minecraft AI Mod 开发智能检索引擎
 
+[![.NET](https://img.shields.io/badge/.NET-10.0-purple)](https://dotnet.microsoft.com/)
+[![Minecraft](https://img.shields.io/badge/Minecraft-26.1.2-green)](https://minecraft.net/)
+[![NeoForge](https://img.shields.io/badge/NeoForge-Supported-orange)](https://neoforged.net/)
+[![MCP](https://img.shields.io/badge/MCP-Supported-blue)](https://modelcontextprotocol.io/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
 把整个 Minecraft Java 源码与 Mod 生态变成 AI 可检索的知识库：Tree-sitter 解析 `.java`，SQLite 存符号 / 调用边 / Mixin 注入 / 全文索引，再通过 12 个 MCP 工具接入 Cursor、Claude Desktop 等客户端。
-
-![MCP 代码片段工具](.screenshots/phase11-snippet.png)
-
-![Mixin 冲突检测](.screenshots/phase11-mixin-conflict.png)
 
 ## 核心特性
 

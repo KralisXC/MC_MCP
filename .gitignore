@@ -8,6 +8,9 @@ app/*
 .vs/
 .vscode/
 
+# ===== 开发截图（首页改用徽章，不再展示截图） =====
+.screenshots/
+
 # ===== 数据库与索引（体积巨大，本地生成） =====
 index/*
 !index/.gitkeep
