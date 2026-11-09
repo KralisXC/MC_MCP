@@ -31,7 +31,7 @@ if ([string]::IsNullOrWhiteSpace($OutputZip)) { $OutputZip = Join-Path $root 'MC
 if ([string]::IsNullOrWhiteSpace($StagingDir)) { $StagingDir = Join-Path $root '_transfer_temp' }
 
 $requiredDirs = @('app', 'LLM', 'code', 'mods')
-$requiredFiles = @('build.bat', 'build_clean.bat', 'README.md')
+$requiredFiles = @('build.bat', 'build_clean.bat', 'README.md', 'DEVELOPMENT.md')
 $forbiddenDirs = @('src', 'docs', 'bin', 'obj', '.git', '.screenshots')
 $forbiddenFiles = @(
     'test.db', 'test.db-wal', 'test.db-shm',
