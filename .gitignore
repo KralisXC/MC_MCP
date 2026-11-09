@@ -1,0 +1,33 @@
+# ===== 编译产物 =====
+bin/
+obj/
+app/*
+!app/.gitkeep
+
+# ===== IDE 缓存 =====
+.vs/
+.vscode/
+
+# ===== 数据库与索引（体积巨大，本地生成） =====
+index/*
+!index/.gitkeep
+
+# ===== 大模型（几百 MB，需自行准备） =====
+LLM/*
+!LLM/.gitkeep
+
+# ===== 源码与反编译代码（几个 GB，不随工具开源） =====
+code/*
+!code/.gitkeep
+
+mods/*
+!mods/.gitkeep
+
+# ===== 开发文档（各阶段内部报告） =====
+docs/*
+!docs/.gitkeep
+
+# ===== 临时打包目录 =====
+_pack_temp/
+_transfer_temp/
+*.zip

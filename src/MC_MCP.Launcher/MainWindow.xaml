@@ -1,0 +1,403 @@
+<Window x:Class="MC_MCP.Launcher.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:MC_MCP.Launcher"
+        Title="Minecraft MCP Console · Phase 12" Height="900" Width="1380"
+        WindowStartupLocation="CenterScreen" Background="#F3F4F6">
+    <Window.Resources>
+        <Style x:Key="Panel" TargetType="Border">
+            <Setter Property="Background" Value="White" />
+            <Setter Property="CornerRadius" Value="8" />
+            <Setter Property="BorderBrush" Value="#E5E7EB" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="14" />
+        </Style>
+        <Style x:Key="FlatButtonBase" TargetType="Button">
+            <Setter Property="Height" Value="32" />
+            <Setter Property="Padding" Value="14,0" />
+            <Setter Property="Margin" Value="0,0,8,8" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border x:Name="Chrome" Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="4" Padding="{TemplateBinding Padding}">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Chrome" Property="Opacity" Value="0.85" />
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="Chrome" Property="Opacity" Value="0.45" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        <Style x:Key="PrimaryButton" TargetType="Button" BasedOn="{StaticResource FlatButtonBase}">
+            <Setter Property="Background" Value="#2563EB" />
+            <Setter Property="Foreground" Value="White" />
+        </Style>
+        <Style x:Key="SecondaryButton" TargetType="Button" BasedOn="{StaticResource FlatButtonBase}">
+            <Setter Property="Background" Value="#E5E7EB" />
+            <Setter Property="Foreground" Value="#1F2937" />
+        </Style>
+        <Style x:Key="DangerButton" TargetType="Button" BasedOn="{StaticResource FlatButtonBase}">
+            <Setter Property="Background" Value="#FEE2E2" />
+            <Setter Property="Foreground" Value="#B91C1C" />
+        </Style>
+        <Style x:Key="MiniButton" TargetType="Button" BasedOn="{StaticResource FlatButtonBase}">
+            <Setter Property="Height" Value="26" />
+            <Setter Property="Padding" Value="10,0" />
+            <Setter Property="Margin" Value="0,0,6,0" />
+            <Setter Property="Background" Value="#F3F4F6" />
+            <Setter Property="Foreground" Value="#374151" />
+            <Setter Property="BorderBrush" Value="#D1D5DB" />
+            <Setter Property="BorderThickness" Value="1" />
+        </Style>
+        <Style x:Key="EnvLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="10.5" />
+            <Setter Property="Foreground" Value="#9CA3AF" />
+        </Style>
+        <Style x:Key="EnvValue" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Foreground" Value="#1F2937" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        </Style>
+        <Style x:Key="StatCard" TargetType="Border">
+            <Setter Property="Background" Value="#F9FAFB" />
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Padding" Value="10,6" />
+            <Setter Property="Margin" Value="0,0,8,8" />
+            <Setter Property="MinWidth" Value="108" />
+        </Style>
+        <Style x:Key="StatValue" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="19" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Foreground" Value="#111827" />
+        </Style>
+        <Style x:Key="StatLabel" TargetType="TextBlock">
+            <Setter Property="FontSize" Value="10.5" />
+            <Setter Property="Foreground" Value="#6B7280" />
+            <Setter Property="Margin" Value="0,1,0,0" />
+        </Style>
+    </Window.Resources>
+
+    <DockPanel>
+        <Menu DockPanel.Dock="Top" Background="White" Padding="8,2">
+            <MenuItem Header="文件(_F)">
+                <MenuItem Header="重新扫描变更 (_R)" Click="OnRefreshScanClick" />
+                <MenuItem Header="打开索引目录 (_O)" Click="OnOpenIndexDirectoryClick" />
+                <Separator />
+                <MenuItem Header="退出 (_X)" Click="OnExitClick" />
+            </MenuItem>
+            <MenuItem Header="查询(_Q)">
+                <MenuItem Header="符号搜索…" Tag="symbol" Click="OnOpenQueryToolClick" />
+                <MenuItem Header="代码搜索…" Tag="code" Click="OnOpenQueryToolClick" />
+                <MenuItem Header="代码片段…" Tag="snippet" Click="OnOpenQueryToolClick" />
+                <MenuItem Header="Mixin 注入…" Tag="mixin" Click="OnOpenQueryToolClick" />
+                <MenuItem Header="Mixin 冲突检测…" Tag="mixinconflict" Click="OnOpenQueryToolClick" />
+                <MenuItem Header="语义搜索…" Tag="semantic" Click="OnOpenQueryToolClick" />
+                <MenuItem Header="Mod 信息…" Tag="mod" Click="OnOpenQueryToolClick" />
+            </MenuItem>
+            <MenuItem Header="工具(_T)">
+                <MenuItem Header="运行自检" Click="OnSelfTestClick" />
+                <MenuItem Header="替换当前数据库…" Click="OnReplaceDatabaseClick" />
+                <MenuItem Header="导出索引为 ZIP…" Click="OnExportZipClick" />
+                <Separator />
+                <MenuItem Header="打包全量构建包（U盘用）" Click="OnPackFullBuildClick" />
+            </MenuItem>
+            <MenuItem Header="帮助(_H)">
+                <MenuItem Header="关于" Click="OnAboutClick" />
+            </MenuItem>
+        </Menu>
+
+        <!-- 环境状态栏 -->
+        <Border DockPanel.Dock="Top" Background="White" BorderBrush="#E5E7EB" BorderThickness="0,0,0,1"
+                Padding="16,7">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="110" />
+                    <ColumnDefinition Width="110" />
+                    <ColumnDefinition Width="2*" />
+                    <ColumnDefinition Width="150" />
+                    <ColumnDefinition Width="3*" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock Style="{StaticResource EnvLabel}" Text="MC 版本" />
+                    <TextBlock x:Name="EnvVersionText" Style="{StaticResource EnvValue}" Text="—" />
+                </StackPanel>
+                <StackPanel Grid.Column="1">
+                    <TextBlock Style="{StaticResource EnvLabel}" Text="ONNX 设备" />
+                    <TextBlock x:Name="EnvDeviceText" Style="{StaticResource EnvValue}" Text="—" />
+                </StackPanel>
+                <StackPanel Grid.Column="2" Margin="8,0,8,0">
+                    <TextBlock Style="{StaticResource EnvLabel}" Text="模型目录" />
+                    <TextBlock x:Name="EnvModelText" Style="{StaticResource EnvValue}" Text="—" />
+                </StackPanel>
+                <StackPanel Grid.Column="3" Margin="8,0,8,0">
+                    <TextBlock Style="{StaticResource EnvLabel}" Text="Load Mode" />
+                    <ComboBox x:Name="LoadModeCombo" Height="24" FontSize="11.5" Margin="0,2,0,0"
+                              ToolTip="McpServer 启动时的载入模式：lazy 实时走 SQLite；full 全部载入内存，语义检索 &lt; 50ms"
+                              SelectionChanged="OnLoadModeChanged">
+                        <ComboBoxItem Content="lazy（默认）" Tag="lazy" />
+                        <ComboBoxItem Content="full（全内存）" Tag="full" />
+                    </ComboBox>
+                </StackPanel>
+                <StackPanel Grid.Column="4" Margin="8,0,0,0">
+                    <TextBlock Style="{StaticResource EnvLabel}" Text="索引库路径" />
+                    <TextBlock x:Name="EnvDbText" Style="{StaticResource EnvValue}" Text="—" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <!-- 智能提示条 -->
+        <Border x:Name="HintBar" DockPanel.Dock="Top" Background="#ECFDF5" BorderBrush="#A7F3D0"
+                BorderThickness="0,0,0,1" Padding="16,7">
+            <DockPanel>
+                <Button x:Name="HintActionButton" DockPanel.Dock="Right" Content="立即增量构建" Height="26"
+                        Padding="12,0" Background="#B45309" Foreground="White" BorderThickness="0"
+                        Margin="12,0,0,0" Style="{StaticResource FlatButtonBase}"
+                        Visibility="Collapsed" Click="OnIncrementalBuildClick" />
+                <TextBlock x:Name="HintText" VerticalAlignment="Center" FontSize="12" Foreground="#047857"
+                           Text="正在初始化……" TextTrimming="CharacterEllipsis" />
+            </DockPanel>
+        </Border>
+
+        <Grid Margin="14,12,14,12">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="2.1*" MinHeight="240" />
+                <RowDefinition Height="6" />
+                <RowDefinition Height="1*" MinHeight="120" />
+            </Grid.RowDefinitions>
+
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="440" MinWidth="330" />
+                    <ColumnDefinition Width="6" />
+                    <ColumnDefinition Width="*" MinWidth="420" />
+                </Grid.ColumnDefinitions>
+
+                <!-- 左：数据源树 -->
+                <Border Grid.Column="0" Style="{StaticResource Panel}" Padding="12">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+
+                        <DockPanel Grid.Row="0">
+                            <TextBlock DockPanel.Dock="Right" x:Name="SelectionSummary" FontSize="11.5"
+                                       Foreground="#6B7280" VerticalAlignment="Center" Text="未勾选" />
+                            <TextBlock Text="数据源" FontSize="15" FontWeight="SemiBold" Foreground="#111827" />
+                        </DockPanel>
+
+                        <Grid Grid.Row="1" Margin="0,10,0,0">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBox x:Name="SourceSearchBox" Grid.Column="0" Height="28" Padding="6,0"
+                                     VerticalContentAlignment="Center" BorderBrush="#D1D5DB"
+                                     ToolTip="按名称或相对路径过滤"
+                                     TextChanged="OnFilterChanged" />
+                            <ComboBox x:Name="SourceFilterCombo" Grid.Column="1" Width="150" Height="28"
+                                      Margin="8,0,0,0" SelectedIndex="0"
+                                      SelectionChanged="OnFilterChanged">
+                                <ComboBoxItem Content="全部" />
+                                <ComboBoxItem Content="仅显示有变化的" />
+                                <ComboBoxItem Content="仅显示解析报错的" />
+                            </ComboBox>
+                        </Grid>
+
+                        <WrapPanel Grid.Row="2" Margin="0,8,0,6">
+                            <Button Content="全选" Style="{StaticResource MiniButton}" Click="OnSelectAllClick" />
+                            <Button Content="全不选" Style="{StaticResource MiniButton}" Click="OnSelectNoneClick" />
+                            <Button Content="展开" Style="{StaticResource MiniButton}" Click="OnExpandAllClick" />
+                            <Button Content="折叠" Style="{StaticResource MiniButton}" Click="OnCollapseAllClick" />
+                            <Button Content="重新扫描" Style="{StaticResource MiniButton}" Click="OnRefreshScanClick" />
+                        </WrapPanel>
+
+                        <TreeView x:Name="SourceTree" Grid.Row="3" BorderThickness="0" Background="Transparent"
+                                  VirtualizingPanel.IsVirtualizing="True"
+                                  VirtualizingPanel.VirtualizationMode="Recycling"
+                                  ScrollViewer.HorizontalScrollBarVisibility="Auto">
+                            <TreeView.ItemContainerStyle>
+                                <Style TargetType="TreeViewItem">
+                                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}" />
+                                    <Setter Property="Visibility" Value="{Binding Visibility}" />
+                                    <Setter Property="AutomationProperties.Name" Value="{Binding Title}" />
+                                    <Setter Property="Padding" Value="2,3" />
+                                </Style>
+                            </TreeView.ItemContainerStyle>
+                            <TreeView.ItemTemplate>
+                                <HierarchicalDataTemplate DataType="{x:Type local:DataSourceNode}"
+                                                          ItemsSource="{Binding Children}">
+                                    <StackPanel Orientation="Horizontal" ToolTip="{Binding ToolTipText}">
+                                        <CheckBox IsChecked="{Binding IsChecked, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                                                  VerticalAlignment="Center" Click="OnNodeCheckClick" />
+                                        <Ellipse Width="8" Height="8" Fill="{Binding IconBrush}" Margin="8,0,0,0"
+                                                 VerticalAlignment="Center" />
+                                        <TextBlock Text="{Binding Title}" Margin="6,0,0,0"
+                                                   FontWeight="{Binding TitleWeight}" VerticalAlignment="Center"
+                                                   Foreground="#1F2937" />
+                                        <Border Background="{Binding BadgeBackground}" CornerRadius="8"
+                                                Padding="7,1" Margin="8,0,0,0" VerticalAlignment="Center"
+                                                Visibility="{Binding BadgeVisibility}">
+                                            <TextBlock Text="{Binding Badge}" FontSize="10.5"
+                                                       Foreground="{Binding BadgeForeground}" />
+                                        </Border>
+                                        <TextBlock Text="{Binding Detail}" Margin="8,0,0,0" FontSize="11"
+                                                   Foreground="#9CA3AF" VerticalAlignment="Center" />
+                                    </StackPanel>
+                                </HierarchicalDataTemplate>
+                            </TreeView.ItemTemplate>
+                        </TreeView>
+                    </Grid>
+                </Border>
+
+                <GridSplitter Grid.Column="1" Width="6" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                              Background="Transparent" />
+
+                <!-- 右：构建控制与统计 -->
+                <ScrollViewer Grid.Column="2" VerticalScrollBarVisibility="Auto"
+                              HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel>
+                        <Border Style="{StaticResource Panel}">
+                            <StackPanel>
+                                <TextBlock Text="构建控制" FontSize="15" FontWeight="SemiBold"
+                                           Foreground="#111827" />
+                                <WrapPanel Margin="0,10,0,0">
+                                    <Button x:Name="IncrementalButton" Content="增量构建"
+                                            Style="{StaticResource PrimaryButton}" Click="OnIncrementalBuildClick" />
+                                    <Button x:Name="RebuildButton" Content="全量重建"
+                                            Style="{StaticResource SecondaryButton}" Click="OnFullRebuildClick" />
+                                    <Button x:Name="BuildSelectedButton" Content="仅构建选中项"
+                                            Style="{StaticResource SecondaryButton}" Click="OnBuildSelectedClick"
+                                            ToolTip="只重新解析左侧勾选的数据源（忽略哈希，强制重解析）" />
+                                </WrapPanel>
+                                <WrapPanel>
+                                    <Button x:Name="VectorSelectedButton" Content="为选中项生成向量"
+                                            Style="{StaticResource SecondaryButton}" Click="OnVectorSelectedClick" />
+                                    <Button x:Name="VectorGlobalButton" Content="全局增量向量"
+                                            Style="{StaticResource SecondaryButton}" Click="OnGlobalVectorClick" />
+                                    <Button x:Name="CancelButton" Content="取消构建" IsEnabled="False"
+                                            Style="{StaticResource DangerButton}" Click="OnCancelClick" />
+                                </WrapPanel>
+
+                                <TextBlock x:Name="BuildScopeText" Margin="0,4,0,0" FontSize="11.5"
+                                           Foreground="#6B7280" TextWrapping="Wrap"
+                                           Text="当前作用域：全部数据源" />
+                                <ProgressBar x:Name="BuildProgress" Height="8" Margin="0,10,0,0" Minimum="0"
+                                             Maximum="100" Value="0" Foreground="#2563EB" Background="#E5E7EB" />
+                                <TextBlock x:Name="BuildProgressText" Margin="0,4,0,0" FontSize="11.5"
+                                           Foreground="#6B7280" Text="空闲" />
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource Panel}" Margin="0,10,0,0">
+                            <StackPanel>
+                                <TextBlock Text="索引概览" FontSize="15" FontWeight="SemiBold"
+                                           Foreground="#111827" />
+                                <WrapPanel Margin="0,10,0,0">
+                                    <Border Style="{StaticResource StatCard}">
+                                        <StackPanel>
+                                            <TextBlock x:Name="SymbolCountText" Style="{StaticResource StatValue}" Text="—" />
+                                            <TextBlock Style="{StaticResource StatLabel}" Text="Symbols" />
+                                        </StackPanel>
+                                    </Border>
+                                    <Border Style="{StaticResource StatCard}">
+                                        <StackPanel>
+                                            <TextBlock x:Name="EdgeCountText" Style="{StaticResource StatValue}" Text="—" />
+                                            <TextBlock Style="{StaticResource StatLabel}" Text="Edges" />
+                                        </StackPanel>
+                                    </Border>
+                                    <Border Style="{StaticResource StatCard}">
+                                        <StackPanel>
+                                            <TextBlock x:Name="InjectionCountText" Style="{StaticResource StatValue}" Text="—" />
+                                            <TextBlock Style="{StaticResource StatLabel}" Text="Injections" />
+                                        </StackPanel>
+                                    </Border>
+                                    <Border Style="{StaticResource StatCard}">
+                                        <StackPanel>
+                                            <TextBlock x:Name="FileCountText" Style="{StaticResource StatValue}" Text="—" />
+                                            <TextBlock Style="{StaticResource StatLabel}" Text="Files" />
+                                        </StackPanel>
+                                    </Border>
+                                    <Border Style="{StaticResource StatCard}">
+                                        <StackPanel>
+                                            <TextBlock x:Name="ModCountText" Style="{StaticResource StatValue}" Text="—" />
+                                            <TextBlock Style="{StaticResource StatLabel}" Text="Mods" />
+                                        </StackPanel>
+                                    </Border>
+                                    <Border Style="{StaticResource StatCard}">
+                                        <StackPanel>
+                                            <TextBlock x:Name="EmbeddingCountText" Style="{StaticResource StatValue}" Text="—" />
+                                            <TextBlock Style="{StaticResource StatLabel}" Text="Embeddings" />
+                                        </StackPanel>
+                                    </Border>
+                                    <Border Style="{StaticResource StatCard}">
+                                        <StackPanel>
+                                            <TextBlock x:Name="CodeChunkCountText" Style="{StaticResource StatValue}" Text="—" />
+                                            <TextBlock Style="{StaticResource StatLabel}" Text="Code Chunks" />
+                                        </StackPanel>
+                                    </Border>
+                                    <Border Style="{StaticResource StatCard}">
+                                        <StackPanel>
+                                            <TextBlock x:Name="ParseErrorCountText" Style="{StaticResource StatValue}" Text="—" />
+                                            <TextBlock Style="{StaticResource StatLabel}" Text="Parse Errors" />
+                                        </StackPanel>
+                                    </Border>
+                                </WrapPanel>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Style="{StaticResource Panel}" Margin="0,10,0,0">
+                            <StackPanel>
+                                <TextBlock Text="上次索引" FontSize="15" FontWeight="SemiBold"
+                                           Foreground="#111827" />
+                                <TextBlock x:Name="LastRunText" Margin="0,8,0,0" FontFamily="Consolas"
+                                           FontSize="11.5" Foreground="#6B7280" TextWrapping="Wrap"
+                                           Text="尚无运行记录" />
+                            </StackPanel>
+                        </Border>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+
+            <GridSplitter Grid.Row="1" Height="6" HorizontalAlignment="Stretch" VerticalAlignment="Stretch"
+                          Background="Transparent" ResizeDirection="Rows" />
+
+            <!-- 底部：实时日志 -->
+            <Border Grid.Row="2" Style="{StaticResource Panel}" Padding="12">
+                <DockPanel>
+                    <DockPanel DockPanel.Dock="Top" Margin="0,0,0,8">
+                        <CheckBox x:Name="AutoScrollCheck" DockPanel.Dock="Right" Content="自动滚动到底部"
+                                  IsChecked="True" VerticalAlignment="Center" Margin="12,0,0,0"
+                                  Foreground="#374151" />
+                        <Button x:Name="ClearLogButton" DockPanel.Dock="Right" Content="清空" Width="58"
+                                Height="24" Margin="12,0,0,0" Style="{StaticResource MiniButton}"
+                                Click="OnClearLogClick" />
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="实时日志" FontWeight="SemiBold" Foreground="#111827" />
+                            <TextBlock Text="Info / Warn / Error / Success" Margin="10,3,0,0" FontSize="10.5"
+                                       Foreground="#9CA3AF" />
+                        </StackPanel>
+                    </DockPanel>
+                    <RichTextBox x:Name="LogBox" IsReadOnly="True" BorderThickness="0" Background="White"
+                                 VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
+                                 FontFamily="Consolas" FontSize="12">
+                        <FlowDocument x:Name="LogDocument" PagePadding="4" FontFamily="Consolas" FontSize="12" />
+                    </RichTextBox>
+                </DockPanel>
+            </Border>
+        </Grid>
+    </DockPanel>
+</Window>
